@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(Sanitizers)
 
 add_executable(
-    SortingAlgorithms
+    SkipList
 
     main.cpp
 

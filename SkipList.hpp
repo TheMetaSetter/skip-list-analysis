@@ -14,17 +14,18 @@
 
 const int maxLevel = 10;
 
-typedef struct SkipListNode* nodePtr;
+typedef struct SkipListNode *nodePtr;
 typedef unsigned long long ull;
 
 // A node of a skip list is similar to a column with a key value and each row (level) contains a pointer. In other words, one node contains multiple levels and multiple levels of a node points to corresponding levels of the next node.
-struct SkipListNode {
-    SkipListNode **next;
+struct SkipListNode
+{
     int key;
+    SkipListNode **next;
 };
 
-// The skip list is traversed using the first node (or "column").
-struct SkipList {
+struct SkipList
+{
     nodePtr root[maxLevel];
     ull powers[maxLevel];
 };
@@ -36,9 +37,9 @@ void choosePowers(SkipList &skipList);
 int chooseLevel(SkipList skipList);
 nodePtr skipListSearch(SkipList skipList, const int key);
 void skipListInsert(SkipList &skipList, const int key);
+SkipList buildSkipList(int a[], int n);
 void skipListRemoveNode(SkipList &skipList, const int key);
 void generateRandomArray(int *&a, int n);
-SkipList buildSkipList(int a[], int n);
 void makeEmptySkipList(SkipList &SkipList);
 
 #endif /* SkipList_hpp */
