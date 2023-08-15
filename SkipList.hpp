@@ -30,9 +30,10 @@ struct SkipList
     ull powers[maxLevel];
 };
 
+bool isEmpty(SkipList skipList);
+int skipListGetSize(SkipList skipList);
 SkipList newSkipList();
 void printSkipList(SkipList skipList);
-bool isEmpty(SkipList skipList);
 void choosePowers(SkipList &skipList);
 int chooseLevel(SkipList skipList);
 nodePtr skipListSearch(SkipList skipList, const int key);

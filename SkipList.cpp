@@ -12,6 +12,33 @@ bool isEmpty(SkipList skipList)
     return !skipList.root[0];
 }
 
+int skipListGetSize(SkipList skipList)
+{
+    if (isEmpty(skipList))
+    {
+        return 0;
+    }
+
+    int size = 0;
+
+    int level;
+    for (level = maxLevel - 1; level >= 0 && !skipList.root[level]; level--)
+        ;
+
+    while (level >= 0)
+    {
+        nodePtr currNode = skipList.root[level];
+        while (currNode)
+        {
+            size++;
+            currNode = currNode->next[level];
+        }
+        level--;
+    }
+
+    return size;
+}
+
 void printSkipList(SkipList skipList)
 {
     if (isEmpty(skipList))
@@ -38,12 +65,27 @@ void printSkipList(SkipList skipList)
 }
 
 // Function to choose a number to represent each level
+// - NOTICE: We count from level 0 since C/C++ array starts from 0.
+// - The basic idea is to choose a number to represent each level.
+// - In theory, we flip the coin to determine whether the node will be inserted to the next level or not.
+//     - If it's HEAD then the node will be inserted to the next level and we also flip the coin again.
+//     - If it's TAIL then the node will not be inserted to the next level.
+// - In practice, each coin flip is represented by a bit.
+//     - If the bit is 1 then the node will be inserted to the next level and we also flip the coin again.
+//     - If the bit is 0 then the node will not be inserted to the next level.
+// - The number of bits is equal to the number of levels that the node will be inserted to, excluded the first level, where the node will always be inserted to.
+// - For example, if the maxLevel is 64, then we need to have a series of 64 bit 1s, which represents 32 HEADS consecutively, to have the node been inserted to the maxLevel.
+// Numbers represented in binary that have 64 bit 1s are ranged from 2^64 - 1 to 2^65.
+// - Therefore, if a node want to be inserted to level k, the random number generated must be in the range of 2^k - 1 to 2^(k + 1).
+// - So the maxLevel should be less than or equal to 64 since the random number generated has its maximum value is 2^64 - 1.
+// - NOTICE: powers[i] = represented the number of HEADS to have the node been inserted to level i.
+
 void choosePowers(SkipList &skipList)
 {
-    skipList.powers[maxLevel - 1] = pow(2, maxLevel) - 1; // 2^maxLevel - 1
-    for (int i = maxLevel - 2, j = 0; i >= 0; i--, j++)
+    skipList.powers[maxLevel - 1] = pow(2, maxLevel - 1) - 1; // 2^(maxLevel - 1) - 1
+    for (int i = maxLevel - 2; i >= 0; i--)
     {
-        skipList.powers[i] = skipList.powers[i + 1] - pow(2, j + 1); // 2^(j + 1)
+        skipList.powers[i] = skipList.powers[i + 1] / 2; // (2^(i + 1) - 1) / 2 = 2^i - 1
     }
 }
 
@@ -62,16 +104,17 @@ SkipList newSkipList()
 // Funtion to choose level for a new node that will be inserted to the Skip List.
 int chooseLevel(SkipList skipList)
 {
-    int i, r = rand() % skipList.powers[maxLevel - 1] + 1; // Generate a random variable r. This variable ranges from 0 to 2^maxLevel - 1.
+    int i;
+    ull r = rand() % (ull)(pow(2, maxLevel)); // Generate a random variable r. This variable ranges from 0 to 2^maxLevel - 1.
 
     for (i = 1; i < maxLevel; i++)
-    { // Iterate from the second lowest level.
+    {
         if (r < skipList.powers[i])
-        {                 // If we encounter a level having its power larger than r, then we return its previous level.
-            return i - 1; // Return a level < the highest level
+        {
+            return i - 1; // Return the number of levels that the node will be inserted to, excluded the first level.
         }
     }
-    return i - 1; // Return the highest level
+    return i - 1;
 }
 
 nodePtr skipListSearch(SkipList skipList, const int key)
