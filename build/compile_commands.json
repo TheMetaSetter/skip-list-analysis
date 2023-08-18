@@ -1,0 +1,14 @@
+[
+{
+  "directory": "/Users/conquerormikrokosmos/Downloads/LAPTOP MAC/IT/C++ PROJECT/skip-list-analysis/build",
+  "command": "/usr/bin/clang++   -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk -g -fsanitize=address -fno-omit-frame-pointer -o CMakeFiles/SkipList.dir/main.cpp.o -c \"/Users/conquerormikrokosmos/Downloads/LAPTOP MAC/IT/C++ PROJECT/skip-list-analysis/main.cpp\"",
+  "file": "/Users/conquerormikrokosmos/Downloads/LAPTOP MAC/IT/C++ PROJECT/skip-list-analysis/main.cpp",
+  "output": "CMakeFiles/SkipList.dir/main.cpp.o"
+},
+{
+  "directory": "/Users/conquerormikrokosmos/Downloads/LAPTOP MAC/IT/C++ PROJECT/skip-list-analysis/build",
+  "command": "/usr/bin/clang++   -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk -g -fsanitize=address -fno-omit-frame-pointer -o CMakeFiles/SkipList.dir/SkipList.cpp.o -c \"/Users/conquerormikrokosmos/Downloads/LAPTOP MAC/IT/C++ PROJECT/skip-list-analysis/SkipList.cpp\"",
+  "file": "/Users/conquerormikrokosmos/Downloads/LAPTOP MAC/IT/C++ PROJECT/skip-list-analysis/SkipList.cpp",
+  "output": "CMakeFiles/SkipList.dir/SkipList.cpp.o"
+}
+]
