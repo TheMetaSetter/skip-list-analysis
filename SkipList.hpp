@@ -27,7 +27,6 @@ struct SkipListNode
 struct SkipList
 {
     nodePtr root[maxLevel];
-    ull powers[maxLevel];
 };
 
 bool isEmpty(SkipList skipList);

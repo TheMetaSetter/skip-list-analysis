@@ -64,35 +64,9 @@ void printSkipList(SkipList skipList)
     }
 }
 
-// Function to choose a number to represent each level
-// - NOTICE: We count from level 0 since C/C++ array starts from 0.
-// - The basic idea is to choose a number to represent each level.
-// - In theory, we flip the coin to determine whether the node will be inserted to the next level or not.
-//     - If it's HEAD then the node will be inserted to the next level and we also flip the coin again.
-//     - If it's TAIL then the node will not be inserted to the next level.
-// - In practice, each coin flip is represented by a bit.
-//     - If the bit is 1 then the node will be inserted to the next level and we also flip the coin again.
-//     - If the bit is 0 then the node will not be inserted to the next level.
-// - The number of bits is equal to the number of levels that the node will be inserted to, excluded the first level, where the node will always be inserted to.
-// - For example, if the maxLevel is 64, then we need to have a series of 64 bit 1s, which represents 32 HEADS consecutively, to have the node been inserted to the maxLevel.
-// Numbers represented in binary that have 64 bit 1s are ranged from 2^64 - 1 to 2^65.
-// - Therefore, if a node want to be inserted to level k, the random number generated must be in the range of 2^k - 1 to 2^(k + 1).
-// - So the maxLevel should be less than or equal to 64 since the random number generated has its maximum value is 2^64 - 1.
-// - NOTICE: powers[i] = represented the number of HEADS to have the node been inserted to level i.
-
-void choosePowers(SkipList &skipList)
-{
-    skipList.powers[maxLevel - 1] = pow(2, maxLevel - 1) - 1; // 2^(maxLevel - 1) - 1
-    for (int i = maxLevel - 2; i >= 0; i--)
-    {
-        skipList.powers[i] = skipList.powers[i + 1] / 2; // (2^(i + 1) - 1) / 2 = 2^i - 1
-    }
-}
-
 SkipList newSkipList()
 {
     SkipList skipList;
-    choosePowers(skipList);
     for (int i = 0; i < maxLevel; i++)
     {
         skipList.root[i] = nullptr;
@@ -102,19 +76,20 @@ SkipList newSkipList()
 }
 
 // Funtion to choose level for a new node that will be inserted to the Skip List.
-int chooseLevel(SkipList skipList)
-{
-    int i;
-    ull r = rand() % (ull)(pow(2, maxLevel)); // Generate a random variable r. This variable ranges from 0 to 2^maxLevel - 1.
+// Because the probability of a node to be inserted at a level is 1/2, excluded the level 0 that every node will be inserted to, so the probability of a node to be inserted at level 1 is 1/2, at level 2 is 1/4, at level 3 is 1/8, and so on.
+// We utilize the fact that the distribution of odd and even number is almost equal for every set of random numbers.
+// So we generate a random number and check if it is even or odd. This is similar to a coin flip with even is head and odd is tail.
 
-    for (i = 1; i < maxLevel; i++)
+int chooseLevel()
+{
+    int i = 0;
+
+    while (i < maxLevel && rand() % 2 == 0)
     {
-        if (r < skipList.powers[i])
-        {
-            return i - 1; // Return the number of levels that the node will be inserted to, excluded the first level.
-        }
+        i++;
     }
-    return i - 1;
+
+    return i;
 }
 
 nodePtr skipListSearch(SkipList skipList, const int key)
@@ -244,10 +219,10 @@ void skipListInsert(SkipList &skipList, const int key)
     }
 
     // Initialize the newNode.
-    level = chooseLevel(skipList);                              // Generate randomly level for newNode.
-    newNode = new SkipListNode();                               // Allocate memory for the newNode.
-    newNode->next = new nodePtr[sizeof(nodePtr) * (level + 1)]; // The next "column" of newNode has its height to be equal to its number of level.
-    newNode->key = key;                                         // Set the new key.
+    level = chooseLevel() + 1;                            // Generate randomly level for newNode.
+    newNode = new SkipListNode();                         // Allocate memory for the newNode.
+    newNode->next = new nodePtr[sizeof(nodePtr) * level]; // The next "column" of newNode has its height to be equal to its number of level.
+    newNode->key = key;                                   // Set the new key.
 
     for (i = 0; i <= level; i++)
     {                               // Initialize next fields of newNode.
@@ -368,7 +343,7 @@ void makeEmptySkipList(SkipList &skipList)
         deleteNode = nullptr;
     }
 
-    for (int currLevel = maxLevel; currLevel >= 0; currLevel--)
+    for (int currLevel = maxLevel - 1; currLevel >= 0; currLevel--)
     {
         if (skipList.root[currLevel])
         {
